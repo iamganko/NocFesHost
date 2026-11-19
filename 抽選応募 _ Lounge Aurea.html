@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>抽選応募 | Lounge Aurea</title>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#04060d;--surface:#0a1022;--ink:#e9ecf6;--muted:#8e98ba;--line:#1a2342;--accent:#d8c692;--accent-ink:#04060d;--gold:#d8c692;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#04060d;--surface:#0a1022;--ink:#e9ecf6;--muted:#8e98ba;--line:#1a2342;--accent:#d8c692;--accent-ink:#04060d;--gold:#d8c692}}
+:root[data-theme="dark"]{--bg:#04060d;--surface:#0a1022;--ink:#e9ecf6;--muted:#8e98ba;--line:#1a2342;--accent:#d8c692;--accent-ink:#04060d;--gold:#d8c692}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:300 16px/1.9 "Noto Sans JP",system-ui,sans-serif}
+h1,h2,h3{font-family:"Shippori Mincho","Hiragino Mincho ProN",serif;font-weight:500;margin:0;letter-spacing:.06em}
+.wrap{max-width:980px;margin:0 auto;padding:0 20px}
+header.hero{padding:88px 0 64px;border-bottom:1px solid var(--line);position:relative;overflow:hidden;background:radial-gradient(ellipse at 88% 0%,rgba(70,90,180,.25),transparent 60%),radial-gradient(ellipse at 0% 100%,rgba(40,50,110,.2),transparent 55%)}
+.hero .wrap{position:relative}
+.moon{position:absolute;right:24px;top:-8px;width:72px;height:72px;border-radius:50%;box-shadow:inset -22px 6px 0 0 var(--gold);transform:rotate(-24deg);opacity:.9}
+.star{position:absolute;width:3px;height:3px;border-radius:50%;background:var(--gold);opacity:.7}
+.eyebrow{font:400 12px "Noto Sans JP",sans-serif;letter-spacing:.4em;color:var(--gold);margin:0 0 18px}
+.hero h1{font-size:clamp(30px,6.4vw,52px);line-height:1.55;letter-spacing:.12em}
+.hero p{max-width:34em;color:var(--muted);margin:24px 0 34px;font-weight:300;letter-spacing:.04em}
+.btn{display:inline-block;background:var(--accent);color:var(--accent-ink);border:0;border-radius:999px;padding:12px 34px;letter-spacing:.08em;font:500 16px "Noto Sans JP",sans-serif;cursor:pointer;text-decoration:none}
+.btn:focus-visible,.slot:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,.card:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+section{padding:48px 0}
+section>.wrap>h2{font-size:24px;margin-bottom:8px;letter-spacing:.14em}
+.sub{color:var(--muted);margin:0 0 24px;font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:0;text-align:left;cursor:pointer;color:inherit;font:inherit;overflow:hidden}
+.card[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.ph img{width:100%;height:100%;object-fit:cover}
+.slot.lot{border-color:var(--gold);color:var(--gold)}
+.slot.lot[aria-pressed="true"]{color:var(--accent-ink)}
+.call{font-size:13px;color:var(--gold);margin-top:6px}
+.note{font-size:13px;margin-top:4px}
+.hrs{font-size:12px;color:var(--muted);margin-top:6px}
+.ph{height:150px;overflow:hidden;display:flex;align-items:center;justify-content:center;font:400 52px "Shippori Mincho",serif;color:#fff}
+.info{padding:14px 16px 16px}
+.info h3{font-size:19px}
+.tag{font-size:13px;color:var(--muted)}
+form{background:var(--surface);border:1px solid var(--line);padding:24px;border-radius:10px;display:grid;gap:18px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:600px){.row{grid-template-columns:1fr}}
+label,.lbl{display:block;font-size:14px;font-weight:500;margin-bottom:4px}
+input,select,textarea{width:100%;padding:10px 12px;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px}
+.slots{display:flex;flex-wrap:wrap;gap:8px}
+.slot{padding:8px 16px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer;font:inherit;border-radius:10px}
+.slot[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.slot[disabled]{text-decoration:line-through;opacity:.4;cursor:not-allowed}
+.sel{padding:12px 16px;border-left:3px solid var(--accent);background:var(--bg);font-size:15px}
+.err{color:#c0334d;font-size:14px;min-height:1.4em;margin:0}
+#done{display:none;text-align:center;padding:40px 24px;background:var(--surface);border:1px solid var(--line)}
+#done h2{font-size:24px;margin-bottom:12px}
+#done dl{display:inline-grid;grid-template-columns:auto auto;gap:6px 20px;text-align:left;margin:16px 0}
+#done dt{color:var(--muted)}#done dd{margin:0}
+.notice{text-align:left;max-width:32em;margin:28px auto 24px;font-size:15px}
+.notice p{margin:0 0 12px}
+.notice .nt{font:500 20px "Shippori Mincho",serif;text-align:center;color:var(--gold);letter-spacing:.06em;margin-bottom:14px}
+.notice .ln{text-align:center;color:var(--gold);letter-spacing:.05em;overflow:hidden}
+.notice .hd{font-weight:500;margin-top:18px;margin-bottom:6px}
+footer{padding:32px 0;color:var(--muted);font-size:13px;border-top:1px solid var(--line)}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+.op{background:var(--surface);border:1px solid var(--gold);padding:20px;margin-top:8px}
+.op table{width:100%;border-collapse:collapse;font-size:14px}
+.op th,.op td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.op .scroll{overflow-x:auto}
+.grp{margin:18px 0 6px;font-weight:500}
+.win{color:var(--gold);font-weight:500}
+.btn.sm{padding:6px 14px;font-size:14px}
+
+#sky{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+#sky i{position:absolute;border-radius:50%;background:#fff;animation:tw 3s ease-in-out infinite}
+#sky i.g{background:var(--gold)}
+@keyframes tw{0%,100%{opacity:.1;transform:scale(.6)}50%{opacity:1;transform:scale(1.3)}}
+header,section,footer{position:relative;z-index:1}
+.hero h1{background:linear-gradient(100deg,var(--ink) 0%,var(--gold) 38%,#fff 50%,var(--gold) 62%,var(--ink) 100%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:shine 7s linear infinite}
+@keyframes shine{from{background-position:100% 0}to{background-position:-100% 0}}
+.moon{filter:drop-shadow(0 0 14px var(--gold))}
+.star{box-shadow:0 0 8px 2px var(--gold);animation:tw 2.6s ease-in-out infinite}
+.btn{position:relative;overflow:hidden;box-shadow:0 0 18px rgba(216,198,146,.35)}
+.btn::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.6),transparent);transform:skewX(-20deg);animation:sweep 4.5s ease-in-out infinite}
+@keyframes sweep{0%,55%{left:-60%}100%{left:140%}}
+.card{transition:box-shadow .25s,border-color .25s,transform .25s}
+.card:hover{border-color:var(--gold);box-shadow:0 0 22px rgba(216,198,146,.3);transform:translateY(-3px)}
+.card[aria-pressed="true"]{box-shadow:0 0 0 1px var(--accent),0 0 28px rgba(216,198,146,.45)}
+.ph{position:relative}
+.ph::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 28% 22%,rgba(255,255,255,.2),transparent 42%)}
+section>.wrap>h2::after{content:"";display:block;width:64px;height:2px;margin-top:10px;background:linear-gradient(90deg,var(--gold),transparent)}
+.slot.lot{box-shadow:0 0 10px rgba(216,198,146,.2)}
+@media(prefers-reduced-motion:reduce){#sky i,.star,.hero h1,.btn::after{animation:none}#sky i{opacity:.5}}
+#confirm{display:none;text-align:center;padding:36px 24px;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+#confirm h2{font-size:22px;margin-bottom:12px}
+#confirm dl{display:inline-grid;grid-template-columns:auto auto;gap:6px 20px;text-align:left;margin:16px 0}
+#confirm dt{color:var(--muted)}#confirm dd{margin:0}
+#confirm .acts{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);box-shadow:none}
+.idbox{display:flex;align-items:stretch;border:1px solid var(--line);border-radius:8px;background:var(--bg);overflow:hidden}
+.idbox span{padding:10px 0 10px 12px;color:var(--gold);font-weight:500}
+.idbox input{border:0;background:transparent;padding-left:4px}
+.idbox:focus-within{outline:3px solid var(--gold);outline-offset:2px}
+.idbox input:focus-visible{outline:none}
+.warn{color:var(--gold);font-size:14px;margin:4px 0 16px}
+.btn.sm.ghost{padding:5px 14px;font-size:13px}
+.box{background:var(--surface);border:1px solid var(--line);padding:24px;border-radius:10px;display:grid;gap:18px}
+a.btn.off{opacity:.45;pointer-events:auto}
+.guide{margin-top:28px;padding:24px;border:1px solid var(--line);border-radius:10px;background:var(--surface);font-size:15px}
+.guide h3{font-size:18px;margin:0 0 10px;color:var(--gold)}
+.guide p{margin:0 0 10px}
+.guide .ln{text-align:center;color:var(--gold);overflow:hidden}
+</style>
+</head>
+<body>
+<div id="sky" aria-hidden="true"></div>
+<header class="hero"><div class="wrap">
+<div class="moon" aria-hidden="true"></div><span class="star" style="right:130px;top:18px" aria-hidden="true"></span><span class="star" style="right:60px;top:96px" aria-hidden="true"></span><span class="star" style="right:170px;top:74px" aria-hidden="true"></span>
+<p class="eyebrow">MIDNIGHT EVENT</p>
+<h1>眠らない夜に、<br>ひとときの特別を。</h1>
+<p>深夜だけの特別な時間を、ホストごとの「抽選枠」でご用意しました。先着ではなく抽選です。結果は運営からご連絡します。</p>
+<a class="btn" href="#hosts">ホストを選ぶ</a>
+</div></header>
+
+<section id="hosts"><div class="wrap">
+<h2>在籍ホスト</h2>
+<p class="sub">応募したいホストを選んでください。</p>
+<div class="grid" id="grid"></div>
+</div></section>
+
+<section id="book"><div class="wrap">
+<h2>抽選に応募する</h2>
+<p class="sub">ホストと抽選枠を選ぶと、応募フォームが開きます。</p>
+<div class="box">
+<div><label for="hostsel">ホストを選ぶ(上の一覧からも選べます)</label><select id="hostsel"><option value="">選んでください</option></select></div>
+<div class="sel" id="sel">ホストが未選択です。上の一覧、またはプルダウンから選んでください。</div>
+<div><span class="lbl" id="tl">抽選枠</span><div class="slots" id="slots" role="group" aria-labelledby="tl"></div></div>
+<p class="err" id="err" role="alert"></p>
+<div><a class="btn off" id="go" href="#book" target="_blank" rel="noopener">応募フォームへ進む</a></div>
+</div>
+<div class="guide">
+<h3>抽選のご案内</h3>
+<p class="ln">⋆┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈⋆</p>
+<p><b>◾︎ スケジュール</b><br>抽選日時：28日 21:00 〜 22:00<br>当選者へ連絡：28日 22:00 〜 23:00</p>
+<p><b>◾︎ ご確認・注意事項</b></p>
+<p>当選された方にはDMへ直接ご連絡いたしますので、必ずDM通知が受け取れるよう設定をお願いいたします。</p>
+<p>23:00までにスタッフからのご連絡へお返事がない場合は落選となり、次の当選者へ繰り上げてご連絡いたします。</p>
+<p>同じ時間帯に複数のホストへ応募された場合は、無効となることがあります。</p>
+<p class="ln">⋆┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈⋆</p>
+</div>
+</div></section>
+<footer><div class="wrap">Lounge Aurea / 20歳未満の方はご利用いただけません。</div></footer>
+<script>
+/* ===== 応募フォームの設定(フォーム完成後に入力) ===== */
+var FORM_BASE="https://docs.google.com/forms/d/e/1FAIpQLScwumDEPNvUOx0QeOdXX8HU_mrtPWWfz5B-GJNipJyHjDFbtw/viewform";   /* 例: https://docs.google.com/forms/d/e/xxxx/viewform */
+var ENTRY_HOST="entry.1881544923";  /* 例: entry.123456789 */
+var ENTRY_SLOT="entry.599183823";  /* 例: entry.987654321 */
+/* ===== ホスト情報(以下はすべてサンプル) ===== */
+var HOSTS=[
+{name:"蒼真",hours:[["20:00","24:00"]],lottery:["21:00","23:00"],style:"執事系",call:"ロイヤル・ブルーナイト",note:"今宵もお迎えにあがります。",icon:""},
+{name:"凛太郎",hours:[["19:30","22:30"],["23:30","25:00"]],lottery:["20:30","24:00"],style:"かわいい系",call:"ハニー・スパークル",note:"いっぱい笑わせちゃいます!",icon:""},
+{name:"鷹斗",hours:[["21:00","26:00"]],lottery:["22:00","25:00"],style:"かっこいい系",call:"ブラック・ファルコン",note:"静かに、でも特別な夜を。",icon:""},
+{name:"ルイ",hours:[["19:00","23:00"]],lottery:["20:00","22:00"],style:"かわいい系",call:"ルイ・ポップコール",note:"盛り上げ担当、任せてください。",icon:""},
+{name:"柊",hours:[["20:00","23:30"],["24:30","26:00"]],lottery:["21:30","25:00"],style:"癒し系",call:"ウィンター・ミスト",note:"ゆっくり話を聞かせてください。",icon:""},
+{name:"隼",hours:[["19:00","24:00"]],lottery:["20:30","23:00"],style:"かっこいい系",call:"ストライク・ハヤブサ",note:"初来店の方も大歓迎です。",icon:""},
+{name:"透",hours:[["20:30","25:00"]],lottery:["22:00","24:00"],style:"執事系",call:"クリスタル・バトラー",note:"ご要望は何なりとお申し付けください。",icon:""},
+{name:"陽翔",hours:[["19:30","23:30"]],lottery:["20:30","22:30"],style:"癒し系",call:"サンシャイン・ハグ",note:"一緒にほっとしましょう。",icon:""},
+{name:"玲央",hours:[["21:00","25:30"]],lottery:["22:30","24:30"],style:"かっこいい系",call:"レオ・ゴールドクラウン",note:"主役は、あなたです。",icon:""},
+{name:"葵",hours:[["19:00","22:00"],["23:00","25:00"]],lottery:["20:00","23:30"],style:"かわいい系",call:"ブルーム・ローズ",note:"元気をチャージしに来てね。",icon:""}
+];
+var COLORS=["#18234a","#202c58","#1b2c4d","#173043","#2a2550","#212650","#182b45","#26233f","#16304a","#212b52"];
+var sel=null,time=null;
+var $=function(i){return document.getElementById(i)};
+HOSTS.forEach(function(h,i){
+  h.id=i;
+  var b=document.createElement("button");
+  b.type="button";b.className="card";b.setAttribute("aria-pressed","false");
+  var ph=h.icon?'<div class="ph" style="background:#000"><img src="'+h.icon+'" alt=""></div>':'<div class="ph" style="background:'+COLORS[i%COLORS.length]+'">'+h.name.charAt(0)+'</div>';
+  b.innerHTML=ph+'<div class="info"><h3></h3><div class="tag"></div><div class="call"></div><div class="note"></div><div class="hrs"></div></div>';
+  var q=function(c){return b.querySelector(c)};
+  q("h3").textContent=h.name;q(".tag").textContent=h.style;
+  q(".call").textContent="シャンパンコール:"+h.call;
+  q(".note").textContent="「"+h.note+"」";
+  q(".hrs").textContent="抽選枠 "+h.lottery.join(" / ");
+  b.onclick=function(){pick(h)};
+  $("grid").appendChild(b);
+  var o=document.createElement("option");o.value=i;o.textContent=h.name+"("+h.style+")";$("hostsel").appendChild(o);
+});
+$("hostsel").onchange=function(){var v=$("hostsel").value;if(v!=="")pick(HOSTS[+v],true)};
+function pick(h,noScroll){
+  sel=h;time=null;
+  document.querySelectorAll(".card").forEach(function(c,i){c.setAttribute("aria-pressed",String(i==h.id))});
+  $("hostsel").value=h.id;
+  $("sel").textContent="応募先:"+h.name+"("+h.style+")";
+  drawSlots();upd();
+  if(!noScroll)$("book").scrollIntoView();
+}
+function drawSlots(){
+  var box=$("slots");box.innerHTML="";
+  if(!sel){box.textContent="先にホストを選んでください。";return}
+  sel.lottery.forEach(function(t){
+    var b=document.createElement("button");
+    b.type="button";b.className="slot lot";b.textContent=t+" 抽選";
+    b.setAttribute("aria-pressed",String(time===t));
+    b.onclick=function(){time=t;drawSlots();upd()};
+    box.appendChild(b);
+  });
+}
+function link(){
+  var p=[];
+  if(ENTRY_HOST)p.push(ENTRY_HOST+"="+encodeURIComponent(sel.name));
+  if(ENTRY_SLOT)p.push(ENTRY_SLOT+"="+encodeURIComponent(time));
+  return FORM_BASE+(FORM_BASE.indexOf("?")>-1?"&":"?")+"usp=pp_url"+(p.length?"&"+p.join("&"):"");
+}
+function ready(){return !!(sel&&time&&FORM_BASE)}
+function upd(){
+  var a=$("go");$("err").textContent="";
+  if(ready()){a.href=link();a.classList.remove("off")}else{a.href="#book";a.classList.add("off")}
+}
+$("go").onclick=function(e){
+  if(ready())return;
+  e.preventDefault();
+  $("err").textContent=!sel?"ホストを選んでください。":!time?"抽選枠を選んでください。":"応募フォームは準備中です。もうしばらくお待ちください。";
+};
+drawSlots();
+(function(){var sky=document.getElementById("sky");
+for(var i=0;i<90;i++){var e=document.createElement("i"),z=Math.random()<.5?1:Math.random()<.8?2:3;
+e.style.cssText="left:"+(Math.random()*100)+"%;top:"+(Math.random()*100)+"%;width:"+z+"px;height:"+z+"px;animation-delay:"+(Math.random()*4)+"s;animation-duration:"+(2+Math.random()*3.5)+"s";
+if(z===3)e.style.boxShadow="0 0 6px 1px rgba(255,255,255,.8)";
+if(Math.random()<.3)e.className="g";sky.appendChild(e)}})();
+
+</script>
+</body>
+</html>
